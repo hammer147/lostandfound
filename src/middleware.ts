@@ -14,20 +14,19 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ req, token }) => {
-        if (!token) return false
+        // if there is no token then the user is not authenticated and has no access to the paths in the matcher
+        if (!token) return false 
 
-        // for now authentication is enough (we will look at role later)
-        return true
+        // authentication is enough
+        if (req.nextUrl.pathname.startsWith('/posts')) return true
+        if (req.nextUrl.pathname.startsWith('/profile')) return true
 
-        // if (req.nextUrl.pathname.startsWith('/protected')) return true
-        // if (req.nextUrl.pathname.startsWith('/member')) {
-        //   return (token.role === "member" || token.role === "admin")
-        // }
-        // if (req.nextUrl.pathname.startsWith('/admin')) {
-        //   return token.role === "admin"
-        // }
+        // authentication and role must be 'ADMIN'
+        if (req.nextUrl.pathname.startsWith('/admin')) {
+          return token.role === "ADMIN"
+        }
 
-        // return false
+        return false
       },
     },
   }
@@ -38,6 +37,5 @@ export default withAuth(
 
 // Supports both a single string value or an array of matchers
 export const config = {
-  matcher: ['/protected/:path*',],
-  // matcher: ['/protected/:path*', '/member/:path*', '/admin/:path*'],
+  matcher: ['/posts/:path*', '/profile/:path*', '/admin/:path*'],
 }

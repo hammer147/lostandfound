@@ -64,6 +64,25 @@ export const postRouter = createRouter()
       return post
     },
   })
+  .query('byUserId', {
+    input: z.object({
+      userId: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const { userId } = input
+      const posts = await ctx.prisma.post.findMany({
+        where: { userId },
+        select: defaultPostSelect,
+      })
+      if (posts.length === 0) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `No post with id '${userId}'`,
+        })
+      }
+      return posts
+    },
+  })
   // update
   .mutation('edit', {
     input: z.object({

@@ -27,9 +27,11 @@ export const authOptions: NextAuthOptions = {
     },
     // Include user.id on session (so it can be used in our routers, for example in post.ts)
     // note that we get it from token (not from user) because we use jwt strategy (not database)
+    // same for user.role
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub
+        session.user.role = token.role as 'USER' | 'ADMIN' // Note that we added this in next-auth.d.ts
       }
       return session
     },
