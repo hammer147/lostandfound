@@ -31,7 +31,7 @@ const MainNavigation: FC = () => {
             {session && (
               <>
                 <li className='text-white px-6 py-2.5 rounded-md hover:bg-green-600 transition duration-150 ease-in-out'>
-                  <Link href="/posts">My Posts</Link>
+                  <Link href="/posts">My Items</Link>
                 </li>
                 <li className='text-white px-6 py-2.5 rounded-md hover:bg-green-600 transition duration-150 ease-in-out'>
                   <Link href="/profile">Profile</Link>

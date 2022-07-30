@@ -30,24 +30,10 @@ const PostCrudPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto flex flex-col items-center justify-center p-4">
-        <h1>Create / read / update / delete</h1>
-        <h2>
-          Posts
-          {postsQuery.status === 'loading' && '(loading)'}
-        </h2>
-        {postsQuery.data?.map((item) => (
-          <article key={item.id}>
-            <h3>{item.title}</h3>
-            <Link href={`/post/${item.id}`}>
-              <a>View more</a>
-            </Link>
-          </article>
-        ))}
-
-        <hr />
+      <main className="">
 
         <form
+          className="mb-3"
           onSubmit={async (e) => {
             e.preventDefault()
             /**
@@ -70,25 +56,64 @@ const PostCrudPage: NextPage = () => {
             } catch { }
           }}
         >
-          <label htmlFor="title">Title:</label>
-          <br />
+          <h2 className="text-lg font-bold mb-3" >Add a new item to your list</h2>
+
+          <div className='mb-2 flex flex-col'>
+            <label className='font-semibold' htmlFor="title">Title</label>
+            <input
+              className="w-48 p-2 rounded-md"
+              id="title"
+              name="title"
+              type="text"
+              disabled={addPost.isLoading}
+            />
+          </div>
+
+          <div className='mb-2 flex flex-col'>
+            <label className='font-semibold' htmlFor="text">Description</label>
+            <textarea className="w-96 h-48 p-2 rounded-md" id="text" name="text" disabled={addPost.isLoading} />
+          </div>
+
           <input
-            id="title"
-            name="title"
-            type="text"
+            className='inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+            type="submit"
             disabled={addPost.isLoading}
           />
-
-          <br />
-          <label htmlFor="text">Text:</label>
-          <br />
-          <textarea id="text" name="text" disabled={addPost.isLoading} />
-          <br />
-          <input type="submit" disabled={addPost.isLoading} />
           {addPost.error && (
             <p style={{ color: 'red' }}>{addPost.error.message}</p>
           )}
         </form>
+
+        <hr />
+
+        <h2 className="text-lg font-bold my-3">
+          List of Items
+          {postsQuery.status === 'loading' && '(loading)'}
+        </h2>
+
+        <div className="flex gap-2">
+          {postsQuery.data?.map((item) => (
+            <div className="w-96">
+              <div className="flex flex-col justify-between p-4 rounded-lg shadow-lg bg-white max-w-sm">
+                <h5 className="text-slate-900 text-xl leading-tight font-medium mb-2">
+                  {item.title}
+                </h5>
+                <p className="text-slate-700 text-base mb-4 flex-1">
+                  {item.text}
+                </p>
+                <div>
+                  <Link href={`/post/${item.id}`}>
+                    <a className="inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
+                      View more
+                    </a>
+                  </Link>
+                </div>
+
+              </div>
+            </div>
+          ))}
+        </div>
+
       </main>
     </>
   )

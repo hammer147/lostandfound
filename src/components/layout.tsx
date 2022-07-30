@@ -5,7 +5,7 @@ type Props = { children: ReactNode }
 
 const Layout: FC<Props> = ({ children }) => {
   return (
-    <div className="bg-slate-300 h-screen">
+    <div className="container mx-auto bg-slate-300 text-slate-800 h-screen">
       <MainNavigation />
       <main className='p-4'>
         {children}
