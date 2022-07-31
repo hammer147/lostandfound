@@ -66,12 +66,22 @@ const PostCrudPage: NextPage = () => {
               name="title"
               type="text"
               disabled={addPost.isLoading}
+              required
             />
           </div>
 
           <div className='mb-2 flex flex-col'>
             <label className='font-semibold' htmlFor="text">Description</label>
-            <textarea className="w-96 h-48 p-2 rounded-md" id="text" name="text" disabled={addPost.isLoading} />
+            <textarea 
+              className="w-96 p-2 rounded-md" 
+              id="text" 
+              name="text" 
+              disabled={addPost.isLoading}
+              required
+              maxLength={150}
+              rows={3}
+              
+            />
           </div>
 
           <input
@@ -91,14 +101,13 @@ const PostCrudPage: NextPage = () => {
           {postsQuery.status === 'loading' && '(loading)'}
         </h2>
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr gap-2">
           {postsQuery.data?.map((item) => (
-            <div className="w-96">
-              <div className="flex flex-col justify-between p-4 rounded-lg shadow-lg bg-white max-w-sm">
-                <h5 className="text-slate-900 text-xl leading-tight font-medium mb-2">
+              <div className="flex flex-col justify-between w-full p-4 rounded-md shadow-lg bg-white">
+                <h5 className="text-slate-900 text-xl leading-tight font-medium">
                   {item.title}
                 </h5>
-                <p className="text-slate-700 text-base mb-4 flex-1">
+                <p className="text-slate-700 text-base my-3 flex-1">
                   {item.text}
                 </p>
                 <div>
@@ -108,9 +117,7 @@ const PostCrudPage: NextPage = () => {
                     </a>
                   </Link>
                 </div>
-
               </div>
-            </div>
           ))}
         </div>
 
