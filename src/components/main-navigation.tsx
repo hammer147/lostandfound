@@ -7,7 +7,7 @@ const MainNavigation: FC = () => {
   const { data: session, status } = useSession()
 
   return (
-    <nav className='w-full bg-green-500 shadow'>
+    <nav className='w-full bg-green-900 shadow'>
       <div className='flex items-center justify-between px-4'>
 
         <div className="py-3">
@@ -50,7 +50,7 @@ const MainNavigation: FC = () => {
           <ul className='flex items-center space-x-6'>
             {(status === 'authenticated') && (
               <>
-                <li className='hidden md:block text-blue-800 px-6 py-2.5'>
+                <li className='hidden md:block text-blue-100 italic px-6 py-2.5'>
                   {session?.user?.email}
                 </li>
                 <li>
