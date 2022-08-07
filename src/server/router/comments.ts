@@ -10,6 +10,7 @@ import { Prisma } from '@prisma/client'
   */
 const defaultCommentSelect = Prisma.validator<Prisma.CommentSelect>()({
   id: true,
+  userId: true,
   name: true,
   text: true,
   createdAt: true,
@@ -39,7 +40,8 @@ export const commentRouter = createRouter()
     }),
     async resolve({ input, ctx }) {
       const comment = await ctx.prisma.comment.create({
-        data: input,
+        // data: input,
+        data: { userId: ctx.session?.user?.id, ...input },
         select: defaultCommentSelect,
       })
 

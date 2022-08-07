@@ -16,9 +16,9 @@ model Post {
     text      String
     createdAt DateTime  @default(now())
     updatedAt DateTime  @default(now()) @updatedAt
-    comments  Comment[]
-    user      User?     @relation(fields: [userId], references: [id])
     userId    String?   @db.ObjectId
+    user      User?     @relation(fields: [userId], references: [id])
+    comments  Comment[]
 }
 
 model Comment {
@@ -29,6 +29,8 @@ model Comment {
     updatedAt DateTime @default(now()) @updatedAt
     postId    String
     post      Post     @relation(fields: [postId], references: [id])
+    userId    String?
+    user      User?    @relation(fields: [userId], references: [id])
 }
 
 // Necessary for Next auth
@@ -68,6 +70,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    comments      Comment[]
 }
 
 model VerificationToken {
