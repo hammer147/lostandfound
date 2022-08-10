@@ -4,6 +4,7 @@ import NextError from 'next/error'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { trpc } from '../../utils/trpc'
+import { TrashIcon } from '@heroicons/react/solid'
 
 const PostViewPage: NextPage = () => {
   const userId = useSession().data?.user?.id
@@ -14,6 +15,12 @@ const PostViewPage: NextPage = () => {
   const addComment = trpc.useMutation('comments.add', {
     async onSuccess() {
       // refetches comments after a comment is added
+      await utils.invalidateQueries(['comments.byPostId', { id }])
+    },
+  })
+  const deleteComment = trpc.useMutation('comments.delete', {
+    async onSuccess() {
+      // refetches comments after a comment is deleted
       await utils.invalidateQueries(['comments.byPostId', { id }])
     },
   })
@@ -68,10 +75,23 @@ const PostViewPage: NextPage = () => {
         {commentsQuery.data?.map((comment) => (
           <li key={comment.id}>
             <div className={`flex ${userId == comment.userId ? 'flex-row-reverse' : 'flex-row'}`}>
-              <div className={`text-white my-2 p-2 min-w-full md:min-w-[60%] rounded-md shadow-lg ${userId == comment.userId ? 'bg-blue-500' : 'bg-green-500'}`}>
-                <p className="font-bold">{comment.name}</p>
-                <p className='my-2'>{comment.text}</p>
-                <p className='text-xs italic text-gray-700'>{comment.createdAt.toLocaleString()}</p>
+              <div className={`flex justify-between text-white my-2 p-2 min-w-full md:min-w-[60%] rounded-md shadow-lg ${userId == comment.userId ? 'bg-blue-500' : 'bg-green-500'}`}>
+                <div>
+                  <p className="font-bold">{comment.name}</p>
+                  <p className='my-2'>{comment.text}</p>
+                  <p className='text-xs italic text-gray-700'>{comment.createdAt.toLocaleString()}</p>
+                </div>
+                {userId === data.userId && (
+                  <div>
+                    <button
+                      className=''
+                      onClick={() => deleteComment.mutate({ id: comment.id })}
+                    >
+                      <TrashIcon className="h-6 w-6 text-white hover:text-red-500" />
+                    </button>
+                  </div>
+                )}
+
               </div>
             </div>
           </li>

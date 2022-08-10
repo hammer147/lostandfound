@@ -48,3 +48,15 @@ export const commentRouter = createRouter()
       return comment
     },
   })
+  .mutation('delete', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const { id } = input
+      await ctx.prisma.comment.delete({ where: { id } })
+      return {
+        id,
+      }
+    },
+  })

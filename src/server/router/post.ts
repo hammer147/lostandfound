@@ -14,6 +14,7 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   text: true,
   createdAt: true,
   updatedAt: true,
+  userId: true,
 })
 
 export const postRouter = createRouter()
