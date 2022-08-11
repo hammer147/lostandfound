@@ -103,7 +103,7 @@ const PostCrudPage: NextPage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr gap-2">
           {postsQuery.data?.map((item) => (
-              <div className="flex flex-col justify-between w-full p-4 rounded-md shadow-lg bg-white">
+              <div key={item.id} className="flex flex-col justify-between w-full p-4 rounded-md shadow-lg bg-white">
                 <h3 className="text-slate-900 text-xl leading-tight font-medium">
                   {item.title}
                 </h3>
