@@ -17,7 +17,7 @@ model Post {
     createdAt DateTime  @default(now())
     updatedAt DateTime  @default(now()) @updatedAt
     userId    String?   @db.ObjectId
-    user      User?     @relation(fields: [userId], references: [id])
+    user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
     comments  Comment[]
 }
 
@@ -28,9 +28,9 @@ model Comment {
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now()) @updatedAt
     postId    String
-    post      Post     @relation(fields: [postId], references: [id])
+    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
     userId    String?
-    user      User?    @relation(fields: [userId], references: [id])
+    user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
