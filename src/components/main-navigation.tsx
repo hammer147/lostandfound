@@ -2,6 +2,10 @@ import { FC } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signIn, signOut } from 'next-auth/react'
+import { LogoutIcon } from '@heroicons/react/outline'
+import { LoginIcon } from '@heroicons/react/outline'
+import { UserIcon } from '@heroicons/react/outline'
+import { CloudIcon } from '@heroicons/react/outline'
 
 const MainNavigation: FC = () => {
   const { data: session, status } = useSession()
@@ -31,9 +35,11 @@ const MainNavigation: FC = () => {
             {session && (
               <>
                 <li className='text-white font-bold flex items-center px-6 py-2.5 rounded-md hover:bg-green-600 transition duration-150 ease-in-out'>
+                  <CloudIcon className='h-6 w-6 pr-1' />
                   <Link href="/posts">Items</Link>
                 </li>
                 <li className='text-white font-bold flex items-center px-6 py-2.5 rounded-md hover:bg-green-600 transition duration-150 ease-in-out'>
+                  <UserIcon className='h-6 w-6 pr-1' />
                   <Link href="/profile">Profile</Link>
                 </li>
               </>
@@ -50,16 +56,17 @@ const MainNavigation: FC = () => {
           <ul className='flex items-center space-x-6'>
             {(status === 'authenticated') && (
               <>
-                <li className='hidden md:block text-blue-100 italic px-6 py-2.5'>
+                <li className='hidden md:block text-blue-100 px-6 py-2.5'>
                   {session?.user?.email}
                 </li>
                 <li>
                   {/* <Link href='/api/auth/signout'>Sign Out</Link> */}
                   <button
                     onClick={() => signOut({ callbackUrl: '/' })}
-                    className='inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out'
+                    className='flex items-center gap-1 px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight truncate rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out'
                   >
-                    Sign Out
+                    <LogoutIcon className='h-6 w-6' />
+                    Log Out
                   </button>
                 </li>
               </>
@@ -69,9 +76,10 @@ const MainNavigation: FC = () => {
                 {/* <Link href='/api/auth/signin'>Sign In</Link> */}
                 <button
                   onClick={() => signIn()}
-                  className='inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out'
+                  className='flex items-center gap-1 px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight truncate rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out'
                 >
-                  Sign In
+                  <LoginIcon className='h-6 w-6' />
+                  Log In
                 </button>
               </li>
             )}
