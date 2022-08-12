@@ -5,6 +5,9 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { trpc } from '../../utils/trpc'
 import { TrashIcon } from '@heroicons/react/solid'
+import { PencilIcon } from '@heroicons/react/solid'
+// import { QrcodeIcon } from '@heroicons/react/solid'
+import { QrcodeIcon } from '@heroicons/react/outline'
 
 const PostViewPage: NextPage = () => {
   const userId = useSession().data?.user?.id
@@ -56,22 +59,32 @@ const PostViewPage: NextPage = () => {
       </Head>
 
       <div>
-        <h2 className="text-lg font-bold mb-3" >Item details</h2>
-        <div className="flex flex-col justify-between w-full p-3 rounded-md shadow-lg bg-white">
+        <h2 className="text-lg font-bold mb-2" >Item details</h2>
+        <div className="flex flex-col justify-between w-full p-2 rounded-md shadow-lg bg-white">
           <div className="flex justify-between">
-            <h3 className="text-slate-900 text-xl leading-tight font-medium">
+            <h3 className="text-slate-900 text-xl leading-tight font-medium mr-2">
               {data.title}
             </h3>
             {userId === data.userId && (
-                  <div>
-                    <button
-                      className=''
-                      onClick={() => deletePost.mutate({ id: data.id })}
-                    >
-                      <TrashIcon className="h-6 w-6 text-slate-600 hover:text-red-500" />
-                    </button>
-                  </div>
-                )}
+              <>
+                <div className="flex-1">
+                  <button
+                    className=''
+                    onClick={() => { }}
+                  >
+                    <PencilIcon className="h-6 w-6 text-slate-600 hover:text-red-500" />
+                  </button>
+                </div>
+                <div className=''>
+                  <button
+                    className=''
+                    onClick={() => deletePost.mutate({ id: data.id })}
+                  >
+                    <TrashIcon className="h-6 w-6 text-slate-600 hover:text-red-500" />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
 
@@ -80,17 +93,15 @@ const PostViewPage: NextPage = () => {
             {data.text}
           </p>
           <div>
-            <button className='mr-2 inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'>
+            <button className='mr-2 flex items-center gap-1 mt-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'>
+              <QrcodeIcon className="h-6 w-6" />
               QR Code
-            </button>
-            <button className='mr-2 inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'>
-              Edit
             </button>
           </div>
         </div>
       </div>
 
-      <h2 className="text-lg font-bold my-3" >Messages</h2>
+      <h2 className="text-lg font-bold mt-3" >Messages</h2>
       <ul>
         {commentsQuery.data?.map((comment) => (
           <li key={comment.id}>
