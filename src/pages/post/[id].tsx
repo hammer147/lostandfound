@@ -1,18 +1,33 @@
+import { useEffect, useRef, useState } from 'react'
 import type { NextPage } from "next"
 import { useSession } from 'next-auth/react'
 import NextError from 'next/error'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { trpc } from '../../utils/trpc'
+import Modal from 'react-modal'
+import { copyImage, downloadImage, downloadPdf } from '../../utils/element2image'
 import { TrashIcon } from '@heroicons/react/solid'
 import { PencilIcon } from '@heroicons/react/solid'
-// import { QrcodeIcon } from '@heroicons/react/solid'
 import { QrcodeIcon } from '@heroicons/react/outline'
+import { QRCodeSVG } from 'qrcode.react'
+import { DownloadIcon } from '@heroicons/react/outline'
+import { ClipboardCopyIcon } from '@heroicons/react/outline'
+
+Modal.setAppElement('#__next')
 
 const PostViewPage: NextPage = () => {
+  const printRef = useRef<HTMLDivElement>(null)
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const userId = useSession().data?.user?.id
   const router = useRouter()
   const id = router.query.id as string
+
+  const [urlForQRCode, setUrlForQRCode] = useState('')  
+  useEffect(() => {
+    setUrlForQRCode(window.location.href)
+  }, [])
+
   const utils = trpc.useContext()
   const postQuery = trpc.useQuery(['post.byId', { id }])
   const commentsQuery = trpc.useQuery(['comments.byPostId', { id }])
@@ -35,6 +50,7 @@ const PostViewPage: NextPage = () => {
     },
   })
 
+  
   if (postQuery.error) {
     return (
       <NextError
@@ -49,6 +65,15 @@ const PostViewPage: NextPage = () => {
   }
 
   const { data } = postQuery
+
+  // modal
+
+  const openModal = () => setModalIsOpen(true)
+  const closeModal = () => setModalIsOpen(false)
+
+  const handleCopyImage = () => copyImage(printRef.current!)
+  const handleDownloadImage = () => downloadImage(printRef.current!, 'QRCode', 'png')
+  const handleDownloadPdf = () => downloadPdf(printRef.current!, 'QRCode')
 
   return (
     <>
@@ -93,7 +118,10 @@ const PostViewPage: NextPage = () => {
             {data.text}
           </p>
           <div>
-            <button className='mr-2 flex items-center gap-1 mt-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'>
+            <button
+              className='mr-2 flex items-center gap-1 mt-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+              onClick={openModal}
+            >
               <QrcodeIcon className="h-6 w-6" />
               QR Code
             </button>
@@ -180,6 +208,52 @@ const PostViewPage: NextPage = () => {
           />
         </form>
       </div>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal} // clicking on overlay or pressing ESC
+
+        /** default styles (more or less) translated to tailwind */
+        // overlayClassName='fixed top-0 left-0 right-0 bottom-0 bg-white/[.75]'
+        // className='absolute top-10 left-10 right-10 bottom-10 border border-gray-600 rounded bg-gray-100 overflow-auto outline-none p-5'
+
+        /** custom styles: the overlay has Modal as its only child, so it can be easily centered with flex */
+        overlayClassName='fixed top-0 left-0 right-0 bottom-0 bg-black/[.75] flex justify-center items-center'
+        className='border border-slate-600 rounded bg-slate-100 overflow-auto outline-none p-3'
+      >
+
+        <div ref={printRef} className='flex flex-col justify-center items-center border border-gray-600 rounded bg-white p-2'>
+          <h2 className='text-green-500 text-lg font-bold mb-1'>Lost and Found</h2>
+          <div>100% anonymous</div>
+          <div>Scan to send a message to the owner.</div>
+          <QRCodeSVG className='m-3' value={urlForQRCode} />
+        </div>
+
+        <div className='flex justify-between'>
+          <button
+            className='flex items-center gap-1 mt-3 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+            onClick={handleDownloadPdf}
+          >
+            <DownloadIcon className="h-6 w-6" />
+            PDF
+          </button>
+          <button
+            className='flex items-center gap-1 mt-3 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+            onClick={handleDownloadImage}
+          >
+            <DownloadIcon className="h-6 w-6" />
+            PNG
+          </button>
+          <button
+            className='flex items-center gap-1 mt-3 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+            onClick={handleCopyImage}
+          >
+            <ClipboardCopyIcon className="h-6 w-6" />
+            COPY
+          </button>
+        </div>
+
+      </Modal>
     </>
   )
 }
