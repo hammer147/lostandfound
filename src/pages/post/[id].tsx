@@ -97,7 +97,7 @@ const PostViewPage: NextPage = () => {
                     className=''
                     onClick={() => { }}
                   >
-                    <PencilIcon className="h-6 w-6 text-slate-600 hover:text-red-500" />
+                    <PencilIcon className="h-6 w-6 text-slate-600 hover:text-blue-500" />
                   </button>
                 </div>
                 <div className=''>
@@ -179,21 +179,22 @@ const PostViewPage: NextPage = () => {
           }}
         >
           <div className='mb-2 flex flex-col'>
-            <label className='font-semibold' htmlFor="name">Name (optional)</label>
+            {/* <label className='font-semibold' htmlFor="name">Name (optional)</label> */}
             <input
               className="w-48 p-2 rounded-md"
               id="name"
               type="text"
               name="name"
-              placeholder='Anonymous'
+              placeholder='your name (optional)'
             />
           </div>
           <div className='mb-2 flex flex-col'>
-            <label className='font-semibold' htmlFor="comment">Message</label>
+            {/* <label className='font-semibold' htmlFor="comment">Message</label> */}
             <textarea
               className="w-96 p-2 rounded-md"
               id="comment"
               name="comment"
+              placeholder="your message"
               required
               maxLength={150}
               rows={3}
@@ -223,10 +224,22 @@ const PostViewPage: NextPage = () => {
       >
 
         <div ref={printRef} className='flex flex-col justify-center items-center border border-gray-600 rounded bg-white p-2'>
-          <h2 className='text-green-500 text-lg font-bold mb-1'>Lost and Found</h2>
+          <h2 className='text-green-600 text-lg font-bold mb-1'>{'Lost & Found'}</h2>
           <div>100% anonymous</div>
           <div>Scan to send a message to the owner.</div>
-          <QRCodeSVG className='m-3' value={urlForQRCode} />
+          <QRCodeSVG 
+          className='m-3' 
+          value={urlForQRCode} 
+          imageSettings={{
+            src: '../../../logo.PNG',
+            // src: 'http://localhost:3000/logo.PNG',
+            x: undefined,
+            y: undefined,
+            height: 24,
+            width: 24,
+            excavate: true,
+          }}
+          />
         </div>
 
         <div className='flex justify-between'>

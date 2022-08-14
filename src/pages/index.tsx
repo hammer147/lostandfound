@@ -14,7 +14,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="container mx-auto flex flex-col items-center justify-center">
-        <h1>Welcome to LostAndFound!</h1>
+        <h1>{'Welcome to Lost & Found'}</h1>
       </main>
     </>
   )
