@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
     // })
     EmailProvider({
       server: `smtp://${env.EMAIL_SERVER_USER}:${env.EMAIL_SERVER_PASSWORD}@${env.EMAIL_SERVER_HOST}:${env.EMAIL_SERVER_PORT}`,
-      from: process.env.EMAIL_FROM,
+      from: env.EMAIL_FROM,
     }),
   ],
   theme: {
