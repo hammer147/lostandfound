@@ -40,18 +40,22 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     // https://next-auth.js.org/providers/email
+    // EmailProvider({
+    //   server: {
+    //     host: env.EMAIL_SERVER_HOST,
+    //     port: env.EMAIL_SERVER_PORT,
+    //     auth: {
+    //       user: env.EMAIL_SERVER_USER,
+    //       pass: env.EMAIL_SERVER_PASSWORD
+    //     }
+    //   },
+    //   from: env.EMAIL_FROM
+    //   // maxAge: 24 * 60 * 60, // How long email links are valid for (default 24h)
+    // })
     EmailProvider({
-      server: {
-        host: env.EMAIL_SERVER_HOST,
-        port: env.EMAIL_SERVER_PORT,
-        auth: {
-          user: env.EMAIL_SERVER_USER,
-          pass: env.EMAIL_SERVER_PASSWORD
-        }
-      },
-      from: env.EMAIL_FROM
-      // maxAge: 24 * 60 * 60, // How long email links are valid for (default 24h)
-    })
+      server: `smtp://${env.EMAIL_SERVER_USER}:${env.EMAIL_SERVER_PASSWORD}@${env.EMAIL_SERVER_HOST}`,
+      from: process.env.EMAIL_FROM,
+    }),
   ],
   theme: {
     colorScheme: "light", // "auto" | "dark" | "light"
