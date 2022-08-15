@@ -23,8 +23,8 @@ const MainNavigation: FC = () => {
                   width={300}
                   height={36}
                 /> */}
-              <div className='p-3 text-xl bg-green-50 text-green-600 font-bold rounded-md truncate'>
-                <span className='lg:hidden'>{'L&F'}</span>
+              <div className='p-3 text-xl bg-white text-green-600 font-bold rounded-md truncate'>
+                <span className='lg:hidden'>{'LF'}</span>
                 <span className='hidden lg:inline-block'>{'Lost & Found'}</span>
               </div>
             </a>

@@ -10,7 +10,7 @@ import { copyImage, downloadImage, downloadPdf } from '../../utils/element2image
 import { TrashIcon } from '@heroicons/react/solid'
 import { PencilIcon } from '@heroicons/react/solid'
 import { QrcodeIcon } from '@heroicons/react/outline'
-import { QRCodeSVG } from 'qrcode.react'
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react'
 import { DownloadIcon } from '@heroicons/react/outline'
 import { ClipboardCopyIcon } from '@heroicons/react/outline'
 
@@ -227,7 +227,9 @@ const PostViewPage: NextPage = () => {
           <h2 className='text-green-600 text-lg font-bold mb-1'>{'Lost & Found'}</h2>
           <div>100% anonymous</div>
           <div>Scan to send a message to the owner.</div>
-          <QRCodeSVG 
+          {/* switched from QRCodeSVG to QRCodeCanvas because the image did not appear when downloading,
+          we might switch back when we have a SVG logo instead of a PNG...*/}
+          <QRCodeCanvas
           className='m-3' 
           value={urlForQRCode} 
           imageSettings={{
