@@ -5,7 +5,7 @@ import { withAuth } from "next-auth/middleware"
 
 const middleware: NextMiddleware = (req) => {
   const token = (req as NextRequest & { nextauth: { token: JWT | null } }).nextauth.token
-  console.log("Middleware token", token)
+  // console.log("Middleware token", token)
   return NextResponse.next()
 }
 
