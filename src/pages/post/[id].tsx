@@ -72,8 +72,8 @@ const PostViewPage: NextPage = () => {
   const closeModal = () => setModalIsOpen(false)
 
   const handleCopyImage = () => copyImage(printRef.current!)
-  const handleDownloadImage = () => downloadImage(printRef.current!, 'QRCode', 'png')
-  const handleDownloadPdf = () => downloadPdf(printRef.current!, 'QRCode')
+  const handleDownloadImage = () => downloadImage(printRef.current!, `QRCode-${data.title}`, 'png')
+  const handleDownloadPdf = () => downloadPdf(printRef.current!, `QRCode-${data.title}`)
 
   return (
     <>
