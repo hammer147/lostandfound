@@ -233,8 +233,7 @@ const PostViewPage: NextPage = () => {
           className='m-3' 
           value={urlForQRCode} 
           imageSettings={{
-            src: '../../../logo.PNG',
-            // src: 'http://localhost:3000/logo.PNG',
+            src: '/logo.PNG',
             x: undefined,
             y: undefined,
             height: 24,
