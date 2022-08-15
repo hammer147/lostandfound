@@ -53,6 +53,11 @@ export const authOptions: NextAuthOptions = {
       // maxAge: 24 * 60 * 60, // How long email links are valid for (default 24h)
     })
   ],
+  theme: {
+    colorScheme: "light", // "auto" | "dark" | "light"
+    brandColor: "#16a34a", // Hex color code
+    logo: "/logo.png" // Absolute URL to image
+  },
 }
 
 export default NextAuth(authOptions)
