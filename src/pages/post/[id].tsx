@@ -23,7 +23,7 @@ const PostViewPage: NextPage = () => {
   const router = useRouter()
   const id = router.query.id as string
 
-  const [urlForQRCode, setUrlForQRCode] = useState('')  
+  const [urlForQRCode, setUrlForQRCode] = useState('')
   useEffect(() => {
     setUrlForQRCode(window.location.href)
   }, [])
@@ -50,7 +50,7 @@ const PostViewPage: NextPage = () => {
     },
   })
 
-  
+
   if (postQuery.error) {
     return (
       <NextError
@@ -85,6 +85,7 @@ const PostViewPage: NextPage = () => {
 
       <div>
         <h2 className="text-lg font-bold mb-2" >Item details</h2>
+
         <div className="flex flex-col justify-between w-full p-2 rounded-md shadow-lg bg-white">
           <div className="flex justify-between">
             <h3 className="text-slate-900 text-xl leading-tight font-medium mr-2">
@@ -111,25 +112,26 @@ const PostViewPage: NextPage = () => {
               </>
             )}
           </div>
-
-
           <p className="text-xs italic">Added on {data.createdAt.toLocaleDateString()}</p>
           <p className="text-slate-700 text-base my-2 flex-1">
             {data.text}
           </p>
-          <div>
-            <button
-              className='mr-2 flex items-center gap-1 mt-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
-              onClick={openModal}
-            >
-              <QrcodeIcon className="h-6 w-6" />
-              QR Code
-            </button>
-          </div>
+          {userId === data.userId && (
+            <div>
+              <button
+                className='mr-2 flex items-center gap-1 mt-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+                onClick={openModal}
+              >
+                <QrcodeIcon className="h-6 w-6" />
+                QR Code
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       <h2 className="text-lg font-bold mt-3" >Messages</h2>
+
       <ul>
         {commentsQuery.data?.map((comment) => (
           <li key={comment.id}>
@@ -159,6 +161,7 @@ const PostViewPage: NextPage = () => {
 
       <div>
         <h2 className="text-lg font-bold my-3" >Send a message</h2>
+        
         <form
           onSubmit={(event) => {
             event.preventDefault()
@@ -230,16 +233,16 @@ const PostViewPage: NextPage = () => {
           {/* switched from QRCodeSVG to QRCodeCanvas because the image did not appear when downloading,
           we might switch back when we have a SVG logo instead of a PNG...*/}
           <QRCodeCanvas
-          className='m-3' 
-          value={urlForQRCode} 
-          imageSettings={{
-            src: '/logo.PNG',
-            x: undefined,
-            y: undefined,
-            height: 24,
-            width: 24,
-            excavate: true,
-          }}
+            className='m-3'
+            value={urlForQRCode}
+            imageSettings={{
+              src: '/logo.PNG',
+              x: undefined,
+              y: undefined,
+              height: 24,
+              width: 24,
+              excavate: true,
+            }}
           />
         </div>
 
