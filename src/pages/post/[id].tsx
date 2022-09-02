@@ -166,7 +166,7 @@ const PostViewPage: NextPage = () => {
           onSubmit={(event) => {
             event.preventDefault()
             let nameSuffix: string
-            userId ? nameSuffix = ' (Owner)' : nameSuffix = ' (Finder)'
+            userId === data.userId ? nameSuffix = ' (Owner)' : nameSuffix = ' (Finder)'
             const $name: HTMLInputElement = (event as any).target.elements.name
             const $comment: HTMLInputElement = (event as any).target.elements.comment
             const input = {
