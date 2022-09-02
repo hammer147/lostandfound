@@ -18,7 +18,9 @@ Modal.setAppElement('#__next')
 
 const PostViewPage: NextPage = () => {
   const printRef = useRef<HTMLDivElement>(null)
-  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalIsOpen, setModalIsOpen] = useState(false) // QR code modal
+  const [editPostModalIsOpen, setEditPostModalIsOpen] = useState(false)
+
   const userId = useSession().data?.user?.id
   const router = useRouter()
   const id = router.query.id as string
@@ -49,6 +51,13 @@ const PostViewPage: NextPage = () => {
       router.push('/posts')
     },
   })
+  const editPost = trpc.useMutation('post.edit', {
+    async onSuccess() {
+      // refetches the post and closes the modal
+      await utils.invalidateQueries(['post.byId', { id }])
+      setEditPostModalIsOpen(false)
+    }
+  })
 
 
   if (postQuery.error) {
@@ -66,7 +75,7 @@ const PostViewPage: NextPage = () => {
 
   const { data } = postQuery
 
-  // modal
+  // modals
 
   const openModal = () => setModalIsOpen(true)
   const closeModal = () => setModalIsOpen(false)
@@ -74,6 +83,10 @@ const PostViewPage: NextPage = () => {
   const handleCopyImage = () => copyImage(printRef.current!)
   const handleDownloadImage = () => downloadImage(printRef.current!, `QRCode-${data.title}`, 'png')
   const handleDownloadPdf = () => downloadPdf(printRef.current!, `QRCode-${data.title}`)
+
+  const openEditPostModal = () => setEditPostModalIsOpen(true)
+  const closeEditPostModal = () => setEditPostModalIsOpen(false)
+
 
   return (
     <>
@@ -96,7 +109,7 @@ const PostViewPage: NextPage = () => {
                 <div className="flex-1">
                   <button
                     className=''
-                    onClick={() => { }}
+                    onClick={openEditPostModal}
                   >
                     <PencilIcon className="h-6 w-6 text-slate-600 hover:text-blue-500" />
                   </button>
@@ -161,7 +174,7 @@ const PostViewPage: NextPage = () => {
 
       <div>
         <h2 className="text-lg font-bold my-3" >Send a message</h2>
-        
+
         <form
           onSubmit={(event) => {
             event.preventDefault()
@@ -213,6 +226,7 @@ const PostViewPage: NextPage = () => {
         </form>
       </div>
 
+      {/** QRCode */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal} // clicking on overlay or pressing ESC
@@ -269,6 +283,83 @@ const PostViewPage: NextPage = () => {
             COPY
           </button>
         </div>
+
+      </Modal>
+
+      {/** edit post */}
+      <Modal
+        isOpen={editPostModalIsOpen}
+        onRequestClose={closeEditPostModal} // clicking on overlay or pressing ESC
+
+        /** default styles (more or less) translated to tailwind */
+        // overlayClassName='fixed top-0 left-0 right-0 bottom-0 bg-white/[.75]'
+        // className='absolute top-10 left-10 right-10 bottom-10 border border-gray-600 rounded bg-gray-100 overflow-auto outline-none p-5'
+
+        /** custom styles: the overlay has Modal as its only child, so it can be easily centered with flex */
+        overlayClassName='fixed top-0 left-0 right-0 bottom-0 bg-black/[.75] flex justify-center items-center'
+        className='border border-slate-600 rounded bg-slate-100 overflow-auto outline-none p-3'
+      >
+        <form
+          className="mb-3"
+          onSubmit={async (e) => {
+            e.preventDefault()
+            /**
+             * In a real app you probably don't want to use this manually
+             * Checkout React Hook Form - it works great with tRPC
+             * @link https://react-hook-form.com/
+             */
+
+            const $text: HTMLInputElement = (e as any).target.elements.text
+            const $title: HTMLInputElement = (e as any).target.elements.title
+            const input = {
+              title: $title.value,
+              text: $text.value,
+            }
+            try {
+              await editPost.mutateAsync({id, data: input})
+
+              $title.value = ''
+              $text.value = ''
+            } catch { }
+          }}
+        >
+          <h2 className="text-lg font-bold mb-3" >Edit your item</h2>
+
+          <div className='mb-2 flex flex-col'>
+            <label className='font-semibold' htmlFor="title">Title</label>
+            <input
+              className="w-48 p-2 rounded-md"
+              id="title"
+              name="title"
+              type="text"
+              disabled={editPost.isLoading}
+              required
+            />
+          </div>
+
+          <div className='mb-2 flex flex-col'>
+            <label className='font-semibold' htmlFor="text">Description</label>
+            <textarea 
+              className="w-96 p-2 rounded-md" 
+              id="text" 
+              name="text" 
+              disabled={editPost.isLoading}
+              required
+              maxLength={150}
+              rows={3}
+              
+            />
+          </div>
+
+          <input
+            className='inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
+            type="submit"
+            disabled={editPost.isLoading}
+          />
+          {editPost.error && (
+            <p style={{ color: 'red' }}>{editPost.error.message}</p>
+          )}
+        </form>
 
       </Modal>
     </>
