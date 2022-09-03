@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { FormEventHandler, useEffect, useRef, useState } from 'react'
 import type { NextPage } from "next"
 import { useSession } from 'next-auth/react'
 import NextError from 'next/error'
@@ -59,6 +59,13 @@ const PostViewPage: NextPage = () => {
     }
   })
 
+  // controlled form state to edit post (in modal) -- must be above the guard closes (rules of hooks)
+  const [title, setTitle] = useState('')
+  const [text, setText] = useState('')
+
+  // controlled form state for comments
+  const [name, setName] = useState('')
+  const [comment, setComment] = useState('')
 
   if (postQuery.error) {
     return (
@@ -73,10 +80,32 @@ const PostViewPage: NextPage = () => {
     return <>Loading...</>
   }
 
-  const { data } = postQuery
+  const { data } = postQuery // -- must be below the guard closes
 
-  // modals
+  const handleSubmitEditPostForm: FormEventHandler = async e => {
+    e.preventDefault()
+    try {
+      await editPost.mutateAsync({ id, data: { title, text } })
+    } catch { }
+  }
 
+  const handleSubmitCommentForm: FormEventHandler = e => {
+    e.preventDefault()
+    let nameSuffix: string
+    userId === data.userId ? nameSuffix = ' (Owner)' : nameSuffix = ' (Finder)'
+    const input = {
+      name: name + nameSuffix,
+      text: comment,
+      postId: id,
+    }
+    try {
+      addComment.mutate(input)
+    } catch { }
+    setName('')
+    setComment('')
+  }
+
+  // modal for QR code
   const openModal = () => setModalIsOpen(true)
   const closeModal = () => setModalIsOpen(false)
 
@@ -84,7 +113,13 @@ const PostViewPage: NextPage = () => {
   const handleDownloadImage = () => downloadImage(printRef.current!, `QRCode-${data.title}`, 'png')
   const handleDownloadPdf = () => downloadPdf(printRef.current!, `QRCode-${data.title}`)
 
-  const openEditPostModal = () => setEditPostModalIsOpen(true)
+  // modal for editing post
+  const openEditPostModal = () => {
+    setTitle(data.title)
+    setText(data.text)
+    setEditPostModalIsOpen(true)
+  }
+
   const closeEditPostModal = () => setEditPostModalIsOpen(false)
 
 
@@ -176,32 +211,17 @@ const PostViewPage: NextPage = () => {
         <h2 className="text-lg font-bold my-3" >Send a message</h2>
 
         <form
-          onSubmit={(event) => {
-            event.preventDefault()
-            let nameSuffix: string
-            userId === data.userId ? nameSuffix = ' (Owner)' : nameSuffix = ' (Finder)'
-            const $name: HTMLInputElement = (event as any).target.elements.name
-            const $comment: HTMLInputElement = (event as any).target.elements.comment
-            const input = {
-              name: $name.value + nameSuffix,
-              text: $comment.value,
-              postId: id,
-            }
-
-            addComment.mutate(input)
-
-            $name.value = ''
-            $comment.value = ''
-          }}
+          onSubmit={handleSubmitCommentForm}
         >
           <div className='mb-2 flex flex-col'>
             {/* <label className='font-semibold' htmlFor="name">Name (optional)</label> */}
             <input
+              type="text"
               className="w-48 p-2 rounded-md"
               id="name"
-              type="text"
-              name="name"
               placeholder='your name (optional)'
+              value={name}
+              onChange={e => setName(e.target.value)}
             />
           </div>
           <div className='mb-2 flex flex-col'>
@@ -209,8 +229,9 @@ const PostViewPage: NextPage = () => {
             <textarea
               className="w-96 p-2 rounded-md"
               id="comment"
-              name="comment"
               placeholder="your message"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
               required
               maxLength={150}
               rows={3}
@@ -301,37 +322,18 @@ const PostViewPage: NextPage = () => {
       >
         <form
           className="mb-3"
-          onSubmit={async (e) => {
-            e.preventDefault()
-            /**
-             * In a real app you probably don't want to use this manually
-             * Checkout React Hook Form - it works great with tRPC
-             * @link https://react-hook-form.com/
-             */
-
-            const $text: HTMLInputElement = (e as any).target.elements.text
-            const $title: HTMLInputElement = (e as any).target.elements.title
-            const input = {
-              title: $title.value,
-              text: $text.value,
-            }
-            try {
-              await editPost.mutateAsync({id, data: input})
-
-              $title.value = ''
-              $text.value = ''
-            } catch { }
-          }}
+          onSubmit={handleSubmitEditPostForm}
         >
           <h2 className="text-lg font-bold mb-3" >Edit your item</h2>
 
           <div className='mb-2 flex flex-col'>
             <label className='font-semibold' htmlFor="title">Title</label>
             <input
+              type="text"
               className="w-48 p-2 rounded-md"
               id="title"
-              name="title"
-              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
               disabled={editPost.isLoading}
               required
             />
@@ -339,15 +341,15 @@ const PostViewPage: NextPage = () => {
 
           <div className='mb-2 flex flex-col'>
             <label className='font-semibold' htmlFor="text">Description</label>
-            <textarea 
-              className="w-96 p-2 rounded-md" 
-              id="text" 
-              name="text" 
+            <textarea
+              className="w-96 p-2 rounded-md"
+              id="text"
+              value={text}
+              onChange={e => setText(e.target.value)}
               disabled={editPost.isLoading}
               required
               maxLength={150}
               rows={3}
-              
             />
           </div>
 

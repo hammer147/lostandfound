@@ -2,9 +2,14 @@ import type { NextPage } from "next"
 import { useSession } from 'next-auth/react'
 import Head from "next/head"
 import Link from 'next/link'
+import { FormEventHandler, useState } from 'react'
 import { trpc } from "../../utils/trpc"
 
 const PostsPage: NextPage = () => {
+  // controlled form
+  const [title, setTitle] = useState('')
+  const [text, setText] = useState('')
+
   const userId = useSession().data?.user?.id! // TODO check if userId is guaranteed to exist (this page is protected by middleware)
   const utils = trpc.useContext()
   const postsQuery = trpc.useQuery(['post.byUserId', { userId }])
@@ -14,6 +19,16 @@ const PostsPage: NextPage = () => {
       await utils.invalidateQueries(['post.byUserId', { userId }])
     },
   })
+
+  const handleSubmit: FormEventHandler = async e => {
+    e.preventDefault()
+    // we could add validation here
+    try {
+      await addPost.mutateAsync({ title, text })
+      setTitle('')
+      setText('')
+    } catch { }
+  }
 
   // prefetch all posts for instant navigation
   // useEffect(() => {
@@ -34,37 +49,18 @@ const PostsPage: NextPage = () => {
 
         <form
           className="mb-3"
-          onSubmit={async (e) => {
-            e.preventDefault()
-            /**
-             * In a real app you probably don't want to use this manually
-             * Checkout React Hook Form - it works great with tRPC
-             * @link https://react-hook-form.com/
-             */
-
-            const $text: HTMLInputElement = (e as any).target.elements.text
-            const $title: HTMLInputElement = (e as any).target.elements.title
-            const input = {
-              title: $title.value,
-              text: $text.value,
-            }
-            try {
-              await addPost.mutateAsync(input)
-
-              $title.value = ''
-              $text.value = ''
-            } catch { }
-          }}
+          onSubmit={handleSubmit}
         >
           <h2 className="text-lg font-bold mb-3" >Add a new item to your list</h2>
 
           <div className='mb-2 flex flex-col'>
             <label className='font-semibold' htmlFor="title">Title</label>
             <input
+              type="text"
               className="w-48 p-2 rounded-md"
               id="title"
-              name="title"
-              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
               disabled={addPost.isLoading}
               required
             />
@@ -72,15 +68,15 @@ const PostsPage: NextPage = () => {
 
           <div className='mb-2 flex flex-col'>
             <label className='font-semibold' htmlFor="text">Description</label>
-            <textarea 
-              className="w-96 p-2 rounded-md" 
-              id="text" 
-              name="text" 
+            <textarea
+              className="w-96 p-2 rounded-md"
+              id="text"
+              value={text}
+              onChange={e => setText(e.target.value)}
               disabled={addPost.isLoading}
               required
               maxLength={150}
               rows={3}
-              
             />
           </div>
 
@@ -103,21 +99,21 @@ const PostsPage: NextPage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr gap-2">
           {postsQuery.data?.map((item) => (
-              <div key={item.id} className="flex flex-col justify-between w-full p-4 rounded-md shadow-lg bg-white">
-                <h3 className="text-slate-900 text-xl leading-tight font-medium">
-                  {item.title}
-                </h3>
-                <p className="text-slate-700 text-base my-3 flex-1">
-                  {item.text}
-                </p>
-                <div>
-                  <Link href={`/post/${item.id}`}>
-                    <a className="inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
-                      View more
-                    </a>
-                  </Link>
-                </div>
+            <div key={item.id} className="flex flex-col justify-between w-full p-4 rounded-md shadow-lg bg-white">
+              <h3 className="text-slate-900 text-xl leading-tight font-medium">
+                {item.title}
+              </h3>
+              <p className="text-slate-700 text-base my-3 flex-1">
+                {item.text}
+              </p>
+              <div>
+                <Link href={`/post/${item.id}`}>
+                  <a className="inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out">
+                    View more
+                  </a>
+                </Link>
               </div>
+            </div>
           ))}
         </div>
 
