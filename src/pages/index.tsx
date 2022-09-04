@@ -1,5 +1,7 @@
 import type { NextPage } from "next"
 import Head from "next/head"
+import Image from "next/image"
+import welcomeImg from '../../public/welcome.png'
 import Link from 'next/link'
 import { trpc } from "../utils/trpc"
 
@@ -14,8 +16,13 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="container mx-auto flex flex-col items-center justify-center">
-        <h2 className="text-lg font-bold mb-3" >Home Page</h2>
-        <div>Coming soon...</div>
+        <h2 className="text-xl text-green-900 font-bold mb-3" >Welcome to Lost & Found</h2>
+        <div>
+          <Image
+            src={welcomeImg}
+            alt='Welcome image'
+          />
+        </div>
       </main>
     </>
   )

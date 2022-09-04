@@ -132,7 +132,7 @@ const PostViewPage: NextPage = () => {
       </Head>
 
       <div>
-        <h2 className="text-lg font-bold mb-2" >Item details</h2>
+        <h2 className="text-lg text-green-900 font-bold mb-2" >Item details</h2>
 
         <div className="flex flex-col justify-between w-full p-2 rounded-md shadow-lg bg-white">
           <div className="flex justify-between">
@@ -178,7 +178,7 @@ const PostViewPage: NextPage = () => {
         </div>
       </div>
 
-      <h2 className="text-lg font-bold mt-3" >Messages</h2>
+      <h2 className="text-lg text-green-900 font-bold mt-3" >Messages</h2>
 
       <ul>
         {commentsQuery.data?.map((comment) => (
@@ -208,7 +208,7 @@ const PostViewPage: NextPage = () => {
       </ul>
 
       <div>
-        <h2 className="text-lg font-bold my-3" >Send a message</h2>
+        <h2 className="text-lg text-green-900 font-bold my-3" >Send a message</h2>
 
         <form
           onSubmit={handleSubmitCommentForm}

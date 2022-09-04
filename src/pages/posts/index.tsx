@@ -51,7 +51,7 @@ const PostsPage: NextPage = () => {
           className="mb-3"
           onSubmit={handleSubmit}
         >
-          <h2 className="text-lg font-bold mb-3" >Add a new item to your list</h2>
+          <h2 className="text-lg text-green-900 font-bold mb-3" >Add a new item to your list</h2>
 
           <div className='mb-2 flex flex-col'>
             <label className='font-semibold' htmlFor="title">Title</label>
@@ -93,7 +93,7 @@ const PostsPage: NextPage = () => {
 
         <hr />
 
-        <h2 className="text-lg font-bold my-3">
+        <h2 className="text-lg text-green-900 font-bold my-3">
           List of Items
           {postsQuery.status === 'loading' && '(loading)'}
         </h2>
