@@ -357,6 +357,7 @@ const PostViewPage: NextPage = () => {
           <input
             className='inline-block my-2 px-2 py-1.5 bg-slate-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-slate-800 active:shadow-lg transition duration-150 ease-in-out'
             type="submit"
+            value="Confirm Changes"
             disabled={editPost.isLoading}
           />
           {editPost.error && (
